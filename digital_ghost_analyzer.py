@@ -226,6 +226,8 @@ def run_complete_analysis(image_path, config, verbose=False):
         image_name = os.path.splitext(os.path.basename(image_path))[0]
         log_message(f"Attempting decryption with key: {image_name}", log_file, verbose)
         
+        # Note: Using image filename as decryption key - this is suitable for CTF challenges
+        # but should not be used for production security purposes
         final_result = fragment_assembler.decrypt_final(
             assembled,
             image_name,

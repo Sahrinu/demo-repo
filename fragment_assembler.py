@@ -64,7 +64,7 @@ def aes_decrypt(encrypted_data, key, iv=None):
     Args:
         encrypted_data: Encrypted data (bytes)
         key: Encryption key (bytes or string)
-        iv: Initialization vector (optional)
+        iv: Initialization vector (optional, will be derived from key if not provided)
     
     Returns:
         bytes: Decrypted data
@@ -82,9 +82,10 @@ def aes_decrypt(encrypted_data, key, iv=None):
     else:
         key = key[:32]
     
-    # Use provided IV or generate from key
+    # Use provided IV or generate from key using SHA-256 (more secure than MD5)
     if iv is None:
-        iv = hashlib.md5(key).digest()
+        import hashlib
+        iv = hashlib.sha256(key).digest()[:16]  # AES block size is 16 bytes
     
     # Decrypt
     cipher = Cipher(
@@ -230,11 +231,15 @@ def load_fragments_from_directory(directory, verbose=False):
     for filename in os.listdir(directory):
         filepath = os.path.join(directory, filename)
         if os.path.isfile(filepath):
-            with open(filepath, 'r', errors='ignore') as f:
-                content = f.read()
-                fragments[filename] = content
+            try:
+                with open(filepath, 'r', errors='replace') as f:
+                    content = f.read()
+                    fragments[filename] = content
+                    if verbose:
+                        print_colored(f"Loaded fragment: {filename} ({len(content)} chars)", Colors.OKBLUE)
+            except Exception as e:
                 if verbose:
-                    print_colored(f"Loaded fragment: {filename} ({len(content)} chars)", Colors.OKBLUE)
+                    print_colored(f"Warning: Failed to load {filename}: {str(e)}", Colors.WARNING)
     
     return fragments
 

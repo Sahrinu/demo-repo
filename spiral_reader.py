@@ -185,8 +185,11 @@ def read_spiral_lsb(image_path, clockwise=True, channel='all', verbose=False, ou
             ascii_text = ""
             byte_data = []
             
-            for i in range(0, len(binary_string) - 7, 8):
+            for i in range(0, len(binary_string), 8):
                 byte = binary_string[i:i+8]
+                if len(byte) < 8:
+                    # Skip incomplete byte at the end
+                    break
                 byte_value = int(byte, 2)
                 byte_data.append(byte_value)
                 
