@@ -1,0 +1,11 @@
+{
+    "image_path": "digital_ghost_challenge.png",
+    "output_directory": "output",
+    "fragments_directory": "fragments",
+    "verbose": true,
+    "log_file": "analysis.log",
+    "lsb_channels": ["red", "green", "blue"],
+    "spiral_direction": "clockwise",
+    "encryption_methods": ["AES", "XOR"],
+    "color_output": true
+}
